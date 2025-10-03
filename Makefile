@@ -1,13 +1,24 @@
-CC=clang
-CFLAGS=-Wall -Werror -Wpedantic -g
+BINDIR := ./bin
+OBJDIR := ./obj
+SRCDIR := ./src
+LIBDIR := ./lib
+INCDIR := ./include
+TESTDIR := ./test
 
-all: ./bin/writer
+CC := clang
+CFLAGS := -Wall -Wextra -Wpedantic -Wconversion -Werror -g3 -std=c17 -fsanitize=address -fsanitize=undefined -fsanitize-trap
+SRC := $(wildcard ${SRCDIR}/*.c)
+OBJ := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRC))
 
-./bin/writer: ./build/writer.o
+PROJ := ${BINDIR}/writer
+
+all: ${PROJ}
+
+${PROJ}: ${OBJ}
 	${CC} $^ -o $@ ${CFLAGS}
 
-./build/writer.o: ./src/writer.c
-	${CC} -c $^ -o $@ ${CFLAGS}
+${OBJDIR}/%.o: ${SRCDIR}/%.c
+	${CC} -c $< -o $@ ${CFLAGS}
 
 clean:
 	rm -rf bin/* build/*

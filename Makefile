@@ -21,4 +21,4 @@ ${OBJDIR}/%.o: ${SRCDIR}/%.c
 	${CC} -c $< -o $@ ${CFLAGS}
 
 clean:
-	rm -rf bin/* build/*
+	rm -rf ${OBJDIR}/* ${BINDIR}/*

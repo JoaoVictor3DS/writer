@@ -1,5 +1,5 @@
+bin/*
 *.o
 *.s
 .cache
-bin/*
 compile_commands.json

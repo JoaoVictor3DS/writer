@@ -6,22 +6,38 @@ INCDIR := ./include
 TESTDIR := ./test
 
 CC := clang
-LDFLAGS := -L./lib 
-CFLAGS := -I$(INCDIR) -Wall -Wextra -Wpedantic -Wconversion -Werror -g3 -std=c17 -fsanitize=address -fsanitize=undefined -fsanitize-trap
-SRC := $(wildcard ${SRCDIR}/*.c)
+CFLAGS := -I$(INCDIR) -Wall -Wextra -Wpedantic -Wconversion -Werror \
+          -g3 -std=c17 -fsanitize=address -fsanitize=undefined -fsanitize-trap
+LDFLAGS := -L$(LIBDIR)
+
+SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRC))
+PROJ := $(BINDIR)/writer
+TESTSRC := $(wildcard $(TESTDIR)/test_*.c)
 
-PROJ := ${BINDIR}/writer
+all: $(PROJ)
 
-all: ${PROJ}
+$(PROJ): $(OBJ)
+	@mkdir -p $(BINDIR)
+	$(CC) $^ -o $@ $(CFLAGS) $(LDFLAGS)
+	@echo "Build done: $@"
 
-${PROJ}: ${OBJ}
-	${CC} $^ -o $@ ${CFLAGS} ${LDFLAGS}
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(OBJDIR)
+	$(CC) -c $< -o $@ $(CFLAGS)
 
-${OBJDIR}/%.o: ${SRCDIR}/%.c
-	${CC} -c $< -o $@ ${CFLAGS}
+test: $(TESTSRC)
+	@mkdir -p $(BINDIR)
+	@for t in $^; do \
+		testbin=$(BINDIR)/$$(basename $$t .c); \
+		echo "Compiling and executing $$t -> $$testbin"; \
+		echo ""; \
+		$(CC) $$t $(filter-out $(SRCDIR)/main.c,$(SRC)) -o $$testbin $(CFLAGS) $(LDFLAGS); \
+		$$testbin; \
+	done
 
 clean:
-	rm -rf ${OBJDIR}/* ${BINDIR}/*
+	rm -rf $(OBJDIR)/* $(BINDIR)/*
+	@echo "Project Cleanned!"
 
-test: ${PROJ}
+.PHONY: all clean test

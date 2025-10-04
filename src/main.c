@@ -2,7 +2,7 @@
 
 #include <writer.h>
 
-int main(int argc, char **argv) {
+int main(const int argc, const char **argv) {
   if (argc < 2) {
     printf("Provide at least one file\n");
     return 1;
@@ -10,7 +10,9 @@ int main(int argc, char **argv) {
 
   const char *filename = argv[1];
 
-  print_file(filename);
+  FILE *fp = get_file(filename);
+
+  print_file(fp);
 
   return 0;
 }

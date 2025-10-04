@@ -1,6 +1,10 @@
 #ifndef WRITER_H
 #define WRITER_H
 
-int print_file(const char *filename);
+#include <stdio.h>
+
+FILE *get_file(const char *filename);
+
+int print_file(FILE *fp);
 
 #endif

@@ -2,12 +2,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int print_file(const char *filename) {
+#define FILE_ERROR 1
+#define FILE_SUCCESS 0
+
+FILE *get_file(const char *filename) {
   FILE *fp = fopen(filename, "r");
 
   if (fp == NULL) {
-    printf("Error: Could not open file %s\n", filename);
-    exit(EXIT_FAILURE);
+    return NULL;
+  }
+
+  return fp;
+}
+
+int print_file(FILE *fp) {
+  if (fp == NULL) {
+    printf("Invalid file pointer\n");
+    return FILE_ERROR;
   }
 
   int c = 0;
@@ -15,7 +26,5 @@ int print_file(const char *filename) {
     printf("%c", c);
   }
 
-  fclose(fp);
-
-  return 0;
+  return FILE_SUCCESS;
 }
